@@ -113,16 +113,16 @@
     <div class="card w-100" style="max-width: 900px;">
       <div class="toggle-switches">
         <button class="btn btn-outline-primary" onclick="toggleTheme()">Toggle Theme</button>
-        <button class="btn btn-outline-success" onclick="switchLanguage()">ગુજરાતી મોડ</button>
+        <button class="btn btn-outline-success" onclick="translateToGujarati()">Gujarati</button>
       </div>
 
-      <div id="english-form">
+      <div id="main-content">
         <div class="text-center mb-4">
           <h3 class="text-primary">🛒 Shop - Khodiyar Provision Store</h3>
           <p class="text-muted">Easily compute totals for your daily sales</p>
         </div>
 
-        {% if error and lang != 'gu' %}
+        {% if error %}
           <div class="alert alert-danger">{{ error }}</div>
         {% endif %}
 
@@ -152,10 +152,10 @@
           <button type="submit" class="btn btn-success w-100 mt-3">Calculate Total</button>
         </form>
 
-        {% if details and lang != 'gu' %}
+        {% if details %}
           <hr />
           <h6 class="text-center mt-3">Breakdown</h6>
-          <ul class="list-group">
+          <ul class="list-group" id="breakdown-list">
             {% for item, data in details.items() %}
               {% if data.total > 0 %}
                 <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -169,62 +169,8 @@
               {% endif %}
             {% endfor %}
           </ul>
-          <div class="alert alert-info text-center mt-3 total-box">
+          <div class="alert alert-info text-center mt-3 total-box" id="total-box">
             Total: ₹{{ total }}
-          </div>
-        {% endif %}
-      </div>
-
-      <div id="gujarati-form" style="display: none;" class="gujarati-font">
-        <div class="text-center mb-4">
-          <h3 class="text-success">🛒 ખોદિયાર પ્રોવિઝન સ્ટોર</h3>
-          <p class="text-muted">દૈનિક વેચાણ માટે કુલ રકમ ગણતરી કરો</p>
-        </div>
-        <form method="POST" action="/?lang=gu">
-          <div class="form-section">
-            <div class="form-group">
-              <label class="form-label">અમૂલ ગોલ્ડ (₹૩૪)</label>
-              <input type="number" name="amul_gold" class="form-control" placeholder="જથ્થો" />
-            </div>
-            <div class="form-group">
-              <label class="form-label">અમૂલ તાઝા (₹૨૮)</label>
-              <input type="number" name="amul_taaza" class="form-control" placeholder="જથ્થો" />
-            </div>
-            <div class="form-group">
-              <label class="form-label">અમૂલ ટી (₹૬૩)</label>
-              <input type="number" name="amul_tea" class="form-control" placeholder="જથ્થો" />
-            </div>
-            <div class="form-group">
-              <label class="form-label">ચા મજા (₹૫૫)</label>
-              <input type="number" name="amul_chai_maza" class="form-control" placeholder="જથ્થો" />
-            </div>
-            <div class="form-group">
-              <label class="form-label">અન્ય (₹)</label>
-              <input type="number" name="other" class="form-control" placeholder="રકમ" />
-            </div>
-          </div>
-          <button type="submit" class="btn btn-success w-100 mt-3">કુલ ગણો</button>
-        </form>
-
-        {% if details and lang == 'gu' %}
-          <hr />
-          <h6 class="text-center mt-3">વિગતવાર</h6>
-          <ul class="list-group">
-            {% for item, data in details.items() %}
-              {% if data.total > 0 %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  {% if data.qty is defined and data.price is defined %}
-                    <span>{{ item }} — {{ data.qty }} × ₹{{ data.price }}</span>
-                  {% else %}
-                    <span>{{ item }}</span>
-                  {% endif %}
-                  <strong>₹{{ data.total }}</strong>
-                </li>
-              {% endif %}
-            {% endfor %}
-          </ul>
-          <div class="alert alert-info text-center mt-3 total-box">
-            કુલ રકમ: ₹{{ total }}
           </div>
         {% endif %}
       </div>
@@ -237,11 +183,31 @@
       document.body.classList.toggle('dark-mode');
     }
 
-    function switchLanguage() {
-      const englishForm = document.getElementById('english-form');
-      const gujaratiForm = document.getElementById('gujarati-form');
-      englishForm.style.display = englishForm.style.display === 'none' ? 'block' : 'none';
-      gujaratiForm.style.display = gujaratiForm.style.display === 'none' ? 'block' : 'none';
+    function translateToGujarati() {
+      const labels = document.querySelectorAll('.form-label');
+      const gujaratiMap = {
+        'Amul Gold (₹34)': 'અમૂલ ગોલ્ડ (₹૩૪)',
+        'Amul Taaza (₹28)': 'અમૂલ તાઝા (₹૨૮)',
+        'Amul Tea (₹63)': 'અમૂલ ટી (₹૬૩)',
+        'Amul Chai Maza (₹55)': 'ચા મજા (₹૫૫)',
+        'Other (₹)': 'અન્ય (₹)',
+        'Qty': 'જથ્થો',
+        'Amount': 'રકમ',
+        'Calculate Total': 'કુલ ગણો',
+        'Breakdown': 'વિગતવાર',
+        'Total:': 'કુલ રકમ:'
+      };
+      labels.forEach(label => {
+        if (gujaratiMap[label.textContent]) {
+          label.textContent = gujaratiMap[label.textContent];
+        }
+      });
+      document.querySelector('.btn-success').textContent = 'કુલ ગણો';
+      const breakdownTitle = document.querySelector('h6');
+      if (breakdownTitle) breakdownTitle.textContent = 'વિગતવાર';
+      const totalBox = document.getElementById('total-box');
+      if (totalBox) totalBox.innerHTML = totalBox.innerHTML.replace('Total:', 'કુલ રકમ:');
+      document.getElementById('main-content').classList.add('gujarati-font');
     }
   </script>
 </body>
