@@ -5,36 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Khodiyar Provision Store</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-light: #f0f4f8;
-      --bg-dark: #121212;
-      --card-light: rgba(255, 255, 255, 0.95);
-      --card-dark: rgba(30, 30, 30, 0.95);
-      --text-light: #000;
-      --text-dark: #fff;
-    }
-
-    [data-theme="light"] {
-      --bg-color: var(--bg-light);
-      --card-color: var(--card-light);
-      --text-color: var(--text-light);
+      --card-bg-light: rgba(240, 248, 255, 0.9); /* AliceBlue */
+      --card-bg-dark: rgba(30, 30, 30, 0.9);
+      --text-color-light: #000;
+      --text-color-dark: #fff;
+      --form-bg-light: #fff;
+      --form-bg-dark: #333;
+      --border-color-dark: #555;
     }
 
     [data-theme="dark"] {
-      --bg-color: var(--bg-dark);
-      --card-color: var(--card-dark);
-      --text-color: var(--text-dark);
+      background-color: #121212;
+      color: var(--text-color-dark);
     }
 
     body, html {
       height: 100%;
       margin: 0;
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      transition: background-color 0.3s, color 0.3s;
+      font-family: 'Roboto', sans-serif;
+      background: url('https://images.pexels.com/photos/10919579/pexels-photo-10919579.jpeg') no-repeat center center fixed;
+      background-size: cover;
+      transition: background-color 0.3s ease;
     }
 
     .overlay {
@@ -46,59 +40,81 @@
     }
 
     .card {
-      background-color: var(--card-color);
+      width: 100%;
+      max-width: 850px;
+      background-color: var(--card-bg-light);
       border-radius: 16px;
       padding: 1.5rem;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-      width: 100%;
-      max-width: 700px;
+      backdrop-filter: blur(4px);
+      transition: background-color 0.3s ease;
     }
 
-    .theme-toggle {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
+    [data-theme="dark"] .card {
+      background-color: var(--card-bg-dark);
+    }
+
+    .form-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
 
     .form-group {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
-      flex: 1 1 100%;
-      margin-bottom: 0.75rem;
+      flex: 1 1 calc(33.333% - 1rem);
+      min-width: 160px;
     }
 
     .form-label {
       font-weight: 500;
-      font-size: 0.85rem;
-      margin: 0;
-      flex: 1;
+      font-size: 0.8rem;
+      margin-bottom: 0.2rem;
     }
 
     .form-control {
-      flex: 0 0 6ch;
-      font-size: 0.85rem;
-      padding: 0.3rem 0.4rem;
-      text-align: center;
+      font-size: 0.9rem;
+      border-radius: 10px;
+      padding: 0.5rem;
+      max-width: 100%;
+    }
+
+    [data-theme="dark"] .form-control {
+      background-color: var(--form-bg-dark);
+      color: var(--text-color-dark);
+      border: 1px solid var(--border-color-dark);
     }
 
     .total-box {
       font-size: 1.2rem;
       font-weight: bold;
     }
+
+    .theme-toggle-btn {
+      white-space: nowrap;
+    }
+
+    @media (max-width: 768px) {
+      .form-group {
+        flex: 1 1 48%;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .form-group {
+        flex: 1 1 100%;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="overlay">
     <div class="card">
-      <div class="theme-toggle">
-        <button class="btn btn-outline-secondary btn-sm" onclick="toggleTheme()">🌙/☀️</button>
-      </div>
-
-      <div class="text-center mb-4">
-        <h4 class="text-primary">🛒 Khodiyar Provision Store</h4>
-        <p class="text-muted">Easily compute totals for your daily sales</p>
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <div>
+          <h4 class="text-primary mb-0">🛒 Khodiyar Provision Store</h4>
+          <small class="text-muted">Easily compute totals for your daily sales</small>
+        </div>
+        <button class="btn btn-outline-secondary btn-sm theme-toggle-btn" onclick="toggleTheme()">Toggle Light/Dark</button>
       </div>
 
       {% if error %}
@@ -106,25 +122,27 @@
       {% endif %}
 
       <form method="POST" autocomplete="off">
-        <div class="form-group">
-          <label class="form-label">Amul Gold (₹34)</label>
-          <input type="number" min="0" name="amul_gold" class="form-control" placeholder="Qty" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Amul Taaza (₹28)</label>
-          <input type="number" min="0" name="amul_taaza" class="form-control" placeholder="Qty" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Amul Tea (₹63)</label>
-          <input type="number" min="0" name="amul_tea" class="form-control" placeholder="Qty" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Amul Chai Maza (₹55)</label>
-          <input type="number" min="0" name="amul_chai_maza" class="form-control" placeholder="Qty" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Other (₹)</label>
-          <input type="number" min="0" name="other" class="form-control" placeholder="Amt" />
+        <div class="form-section">
+          <div class="form-group">
+            <label class="form-label">Amul Gold (₹34)</label>
+            <input type="number" min="0" name="amul_gold" class="form-control" placeholder="Qty" maxlength="10" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Amul Taaza (₹28)</label>
+            <input type="number" min="0" name="amul_taaza" class="form-control" placeholder="Qty" maxlength="10" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Amul Tea (₹63)</label>
+            <input type="number" min="0" name="amul_tea" class="form-control" placeholder="Qty" maxlength="10" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Amul Chai Maza (₹55)</label>
+            <input type="number" min="0" name="amul_chai_maza" class="form-control" placeholder="Qty" maxlength="10" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Other (₹)</label>
+            <input type="number" min="0" name="other" class="form-control" placeholder="Amount" maxlength="10" />
+          </div>
         </div>
         <button type="submit" class="btn btn-success w-100 mt-3">Calculate Total</button>
       </form>
