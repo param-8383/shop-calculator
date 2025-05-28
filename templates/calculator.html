@@ -6,83 +6,124 @@
   <title>Shop Calculator</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body {
-      background: #f5f8ff;
+    body, html {
+      height: 100%;
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
     }
+
+    /* Background video styling */
+    .bg-video {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+    }
+
     .card {
-      border-radius: 12px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(5px);
     }
-    input[type=number]::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-    }
-    .total-box {
-      font-size: 1.4rem;
-      font-weight: bold;
-    }
+
     .form-label {
-      font-weight: 500;
+      font-weight: 600;
     }
+
     .form-control {
       font-size: 1rem;
       padding: 0.6rem;
+      border-radius: 8px;
+    }
+
+    .total-box {
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+
+    .container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 1rem;
+    }
+
+    h4, p {
+      margin-bottom: 0.5rem;
+    }
+
+    button.btn {
+      font-size: 1rem;
+      padding: 0.7rem;
     }
   </style>
 </head>
 <body>
-  <div class="container py-4">
-    <div class="row justify-content-center">
-      <div class="col-12 col-sm-10 col-md-8 col-lg-6">
-        <div class="card p-4">
-          <div class="text-center mb-3">
-            <h4 class="text-primary">Shop Calculator</h4>
-            <p class="text-muted small">Quickly calculate daily totals</p>
-          </div>
-          {% if error %}
-            <div class="alert alert-danger">{{ error }}</div>
-          {% endif %}
-          <form method="POST" autocomplete="off">
-            <div class="mb-3">
-              <label class="form-label">Amul Gold (₹34)</label>
-              <input type="number" min="0" name="amul_gold" class="form-control" placeholder="Enter quantity">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Amul Taaza (₹28)</label>
-              <input type="number" min="0" name="amul_taaza" class="form-control" placeholder="Enter quantity">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Amul Tea (₹63)</label>
-              <input type="number" min="0" name="amul_tea" class="form-control" placeholder="Enter quantity">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Amul Chai Maza (₹55)</label>
-              <input type="number" min="0" name="amul_chai_maza" class="form-control" placeholder="Enter quantity">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Other (₹)</label>
-              <input type="number" min="0" name="other" class="form-control" placeholder="Enter fixed amount">
-            </div>
-            <button type="submit" class="btn btn-success w-100 mt-2">Calculate Total</button>
-          </form>
 
-          {% if details %}
-            <hr>
-            <h6 class="text-center mt-3">Breakdown</h6>
-            <ul class="list-group">
-              {% for item, cost in details.items() %}
-                <li class="list-group-item d-flex justify-content-between">
-                  <span>{{ item }}</span>
-                  <strong>₹{{ cost }}</strong>
-                </li>
-              {% endfor %}
-            </ul>
-            <div class="alert alert-info text-center mt-3 total-box">
-              Total: ₹{{ total }}
-            </div>
-          {% endif %}
+  <!-- Background video -->
+  <video autoplay muted loop class="bg-video">
+    <source src="https://cdn.videvo.net/videvo_files/video/free/2014-12/large_watermarked/Milk_Pouring_into_Glass_preview.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+  <div class="container">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+      <div class="card p-4">
+        <div class="text-center mb-3">
+          <h4 class="text-primary">Shop Calculator</h4>
+          <p class="text-muted small">Quickly calculate daily totals</p>
         </div>
+
+        {% if error %}
+          <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" autocomplete="off">
+          <div class="mb-3">
+            <label class="form-label">Amul Gold (₹34)</label>
+            <input type="number" min="0" name="amul_gold" class="form-control" placeholder="Enter quantity">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Amul Taaza (₹28)</label>
+            <input type="number" min="0" name="amul_taaza" class="form-control" placeholder="Enter quantity">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Amul Tea (₹63)</label>
+            <input type="number" min="0" name="amul_tea" class="form-control" placeholder="Enter quantity">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Amul Chai Maza (₹55)</label>
+            <input type="number" min="0" name="amul_chai_maza" class="form-control" placeholder="Enter quantity">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Other (₹)</label>
+            <input type="number" min="0" name="other" class="form-control" placeholder="Enter fixed amount">
+          </div>
+          <button type="submit" class="btn btn-success w-100 mt-2">Calculate Total</button>
+        </form>
+
+        {% if details %}
+          <hr>
+          <h6 class="text-center mt-3">Breakdown</h6>
+          <ul class="list-group">
+            {% for item, cost in details.items() %}
+              <li class="list-group-item d-flex justify-content-between">
+                <span>{{ item }}</span>
+                <strong>₹{{ cost }}</strong>
+              </li>
+            {% endfor %}
+          </ul>
+          <div class="alert alert-info text-center mt-3 total-box">
+            Total: ₹{{ total }}
+          </div>
+        {% endif %}
       </div>
     </div>
   </div>
+
 </body>
 </html>
