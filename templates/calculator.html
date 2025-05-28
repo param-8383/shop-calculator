@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Shop Calculator</title>
+  <title>Khodiyar Provision Store</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <style>
     html, body {
@@ -120,20 +120,27 @@
       </form>
 
       {% if details %}
-        <hr />
-        <h6 class="text-center mt-3">Breakdown</h6>
-        <ul class="list-group">
-          {% for item, cost in details.items() %}
-            <li class="list-group-item d-flex justify-content-between">
-              <span>{{ item }}</span>
-              <strong>₹{{ cost }}</strong>
-            </li>
-          {% endfor %}
-        </ul>
-        <div class="alert alert-info text-center mt-3 total-box">
-          Total: ₹{{ total }}
-        </div>
+  <hr />
+  <h6 class="text-center mt-3">Breakdown</h6>
+  <ul class="list-group">
+    {% for item, data in details.items() %}
+      {% if data.total > 0 %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          {% if data.qty is defined and data.price is defined %}
+            <span>{{ item }} — {{ data.qty }} × ₹{{ data.price }}</span>
+          {% else %}
+            <span>{{ item }}</span>
+          {% endif %}
+          <strong>₹{{ data.total }}</strong>
+        </li>
       {% endif %}
+    {% endfor %}
+  </ul>
+  <div class="alert alert-info text-center mt-3 total-box">
+    Total: ₹{{ total }}
+  </div>
+{% endif %}
+
     </div>
   </div>
 </body>
