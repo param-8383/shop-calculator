@@ -17,19 +17,44 @@ def calculator():
 
     if request.method == 'POST':
         try:
+            # Parse quantities and amounts safely
             gold_qty = int(request.form.get('amul_gold', 0) or 0)
             taaza_qty = int(request.form.get('amul_taaza', 0) or 0)
             tea_qty = int(request.form.get('amul_tea', 0) or 0)
             chai_maza_qty = int(request.form.get('amul_chai_maza', 0) or 0)
             other_amt = int(request.form.get('other', 0) or 0)
 
-            details['Amul Gold'] = gold_qty * PRICES['amul_gold']
-            details['Amul Taaza'] = taaza_qty * PRICES['amul_taaza']
-            details['Amul Tea'] = tea_qty * PRICES['amul_tea']
-            details['Amul Chai Maza'] = chai_maza_qty * PRICES['amul_chai_maza']
-            details['Other'] = other_amt
+            # Add only non-zero items with structured data
+            if gold_qty > 0:
+                details['Amul Gold'] = {
+                    'qty': gold_qty,
+                    'price': PRICES['amul_gold'],
+                    'total': gold_qty * PRICES['amul_gold']
+                }
+            if taaza_qty > 0:
+                details['Amul Taaza'] = {
+                    'qty': taaza_qty,
+                    'price': PRICES['amul_taaza'],
+                    'total': taaza_qty * PRICES['amul_taaza']
+                }
+            if tea_qty > 0:
+                details['Amul Tea'] = {
+                    'qty': tea_qty,
+                    'price': PRICES['amul_tea'],
+                    'total': tea_qty * PRICES['amul_tea']
+                }
+            if chai_maza_qty > 0:
+                details['Amul Chai Maza'] = {
+                    'qty': chai_maza_qty,
+                    'price': PRICES['amul_chai_maza'],
+                    'total': chai_maza_qty * PRICES['amul_chai_maza']
+                }
+            if other_amt > 0:
+                details['Other'] = {
+                    'total': other_amt
+                }
 
-            total = sum(details.values())
+            total = sum(item['total'] for item in details.values())
         except ValueError:
             error = "Please enter valid numbers only."
 
