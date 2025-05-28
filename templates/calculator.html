@@ -3,162 +3,210 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ખોડિયાર પ્રોવિઝન સ્ટોર | Khodiyar Provision Store</title>
+  <title>Khodiyar Provision Store</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati&family=Inter&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati&display=swap');
 
-    :root {
-      --bg-light: #f0f0f0;
-      --bg-dark: #121212;
-      --text-light: #000;
-      --text-dark: #f9f9f9;
-      --card-light: rgba(255, 255, 255, 0.95);
-      --card-dark: rgba(33, 33, 33, 0.95);
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg-light);
-      color: var(--text-light);
-      transition: all 0.3s ease;
+    body, html {
+      height: 100%;
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      transition: background-color 0.3s, color 0.3s;
     }
 
     .dark-mode {
-      background-color: var(--bg-dark);
-      color: var(--text-dark);
+      background-color: #121212;
+      color: white;
+    }
+
+    .dark-mode .card {
+      background-color: rgba(33, 33, 33, 0.95);
+      color: white;
     }
 
     .overlay {
       min-height: 100vh;
+      padding: 2rem 1rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 2rem 1rem;
     }
 
     .card {
-      background-color: var(--card-light);
-      border-radius: 1rem;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-      padding: 2rem;
-      max-width: 900px;
-      width: 100%;
-    }
-
-    .dark-mode .card {
-      background-color: var(--card-dark);
+      background-color: rgba(240, 248, 255, 0.9);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(4px);
     }
 
     .form-section {
       display: flex;
       flex-wrap: wrap;
       gap: 1rem;
+      justify-content: space-between;
     }
 
     .form-group {
+      flex: 1 1 calc(33.333% - 1rem);
+      min-width: 160px;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      flex: 1 1 45%;
-      min-width: 200px;
     }
 
     .form-label {
-      min-width: 120px;
-      font-size: 0.9rem;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin-bottom: 0;
     }
 
     .form-control {
-      flex: 1;
-      padding: 0.4rem 0.6rem;
-      font-size: 1rem;
-      max-width: 90px;
-    }
-
-    .switch-buttons {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      margin-bottom: 1rem;
-      flex-wrap: wrap;
+      font-size: 0.95rem;
+      border-radius: 10px;
+      padding: 0.5rem;
+      max-width: 5rem;
     }
 
     .total-box {
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       font-weight: bold;
     }
 
-    .gujarati {
+    .toggle-switches {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .form-group {
+        flex: 1 1 48%;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .form-group {
+        flex: 1 1 100%;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .form-label {
+        margin-bottom: 0.25rem;
+      }
+
+      .toggle-switches {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+
+    .gujarati-font {
       font-family: 'Noto Sans Gujarati', sans-serif;
     }
   </style>
 </head>
-<body>
+<body class="" id="body">
   <div class="overlay">
-    <div class="card" id="card">
-      <div class="text-center mb-3">
-        <h4 class="text-primary gujarati" id="title">ખોડિયાર પ્રોવિઝન સ્ટોર</h4>
-        <p class="text-muted" id="subtitle">દૈનિક વેચાણની ગણતરી કરો</p>
+    <div class="card w-100" style="max-width: 900px;">
+      <div class="toggle-switches">
+        <button class="btn btn-outline-primary" onclick="toggleTheme()">Toggle Theme</button>
+        <button class="btn btn-outline-success" onclick="switchLanguage()">ગુજરાતી મોડ</button>
       </div>
 
-      <div class="switch-buttons">
-        <button class="btn btn-outline-secondary" onclick="toggleTheme()">🌗 Mode</button>
-        <button class="btn btn-outline-primary" onclick="toggleGujarati()">🌐 ગુજરાતી</button>
+      <div id="english-form">
+        <div class="text-center mb-4">
+          <h3 class="text-primary">🛒 Shop - Khodiyar Provision Store</h3>
+          <p class="text-muted">Easily compute totals for your daily sales</p>
+        </div>
+
+        {% if error %}
+          <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" autocomplete="off">
+          <div class="form-section">
+            <div class="form-group">
+              <label class="form-label">Amul Gold (₹34)</label>
+              <input type="number" min="0" name="amul_gold" class="form-control" placeholder="Qty" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Amul Taaza (₹28)</label>
+              <input type="number" min="0" name="amul_taaza" class="form-control" placeholder="Qty" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Amul Tea (₹63)</label>
+              <input type="number" min="0" name="amul_tea" class="form-control" placeholder="Qty" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Amul Chai Maza (₹55)</label>
+              <input type="number" min="0" name="amul_chai_maza" class="form-control" placeholder="Qty" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Other (₹)</label>
+              <input type="number" min="0" name="other" class="form-control" placeholder="Amount" />
+            </div>
+          </div>
+          <button type="submit" class="btn btn-success w-100 mt-3">Calculate Total</button>
+        </form>
+
+        {% if details %}
+          <hr />
+          <h6 class="text-center mt-3">Breakdown</h6>
+          <ul class="list-group">
+            {% for item, data in details.items() %}
+              {% if data.total > 0 %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  {% if data.qty is defined and data.price is defined %}
+                    <span>{{ item }} — {{ data.qty }} × ₹{{ data.price }}</span>
+                  {% else %}
+                    <span>{{ item }}</span>
+                  {% endif %}
+                  <strong>₹{{ data.total }}</strong>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+          <div class="alert alert-info text-center mt-3 total-box">
+            Total: ₹{{ total }}
+          </div>
+        {% endif %}
       </div>
 
-      {% if error %}
-        <div class="alert alert-danger">{{ error }}</div>
-      {% endif %}
-
-      <form method="POST" autocomplete="off">
-        <div class="form-section">
-          <div class="form-group">
-            <label class="form-label" id="label_gold">Amul Gold (₹34)</label>
-            <input type="number" min="0" name="amul_gold" class="form-control" />
-          </div>
-          <div class="form-group">
-            <label class="form-label" id="label_taaza">Amul Taaza (₹28)</label>
-            <input type="number" min="0" name="amul_taaza" class="form-control" />
-          </div>
-          <div class="form-group">
-            <label class="form-label" id="label_tea">Amul Tea (₹63)</label>
-            <input type="number" min="0" name="amul_tea" class="form-control" />
-          </div>
-          <div class="form-group">
-            <label class="form-label" id="label_chai">Chai Maza (₹55)</label>
-            <input type="number" min="0" name="amul_chai_maza" class="form-control" />
-          </div>
-          <div class="form-group">
-            <label class="form-label" id="label_other">Other ₹</label>
-            <input type="number" min="0" name="other" class="form-control" />
-          </div>
+      <div id="gujarati-form" style="display: none;" class="gujarati-font">
+        <div class="text-center mb-4">
+          <h3 class="text-success">🛒 ખોદિયાર પ્રોવિઝન સ્ટોર</h3>
+          <p class="text-muted">દૈનિક વેચાણ માટે કુલ રકમ ગણતરી કરો</p>
         </div>
+        <form>
+          <div class="form-section">
+            <div class="form-group">
+              <label class="form-label">અમૂલ ગોલ્ડ (₹૩૪)</label>
+              <input type="number" class="form-control" placeholder="જથ્થો" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">અમૂલ તાઝા (₹૨૮)</label>
+              <input type="number" class="form-control" placeholder="જથ્થો" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">અમૂલ ટી (₹૬૩)</label>
+              <input type="number" class="form-control" placeholder="જથ્થો" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">ચા મજા (₹૫૫)</label>
+              <input type="number" class="form-control" placeholder="જથ્થો" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">અન્ય (₹)</label>
+              <input type="number" class="form-control" placeholder="રકમ" />
+            </div>
+          </div>
+          <button type="submit" class="btn btn-success w-100 mt-3">કુલ ગણો</button>
+        </form>
+      </div>
 
-        <button type="submit" class="btn btn-success w-100 mt-3">Calculate Total</button>
-      </form>
-
-      {% if details %}
-        <hr />
-        <h6 class="text-center mt-3" id="breakdownTitle">Breakdown</h6>
-        <ul class="list-group">
-          {% for item, data in details.items() %}
-            {% if data.total > 0 %}
-              <li class="list-group-item d-flex justify-content-between align-items-center">
-                {% if data.qty is defined and data.price is defined %}
-                  <span>{{ item }} — {{ data.qty }} × ₹{{ data.price }}</span>
-                {% else %}
-                  <span>{{ item }}</span>
-                {% endif %}
-                <strong>₹{{ data.total }}</strong>
-              </li>
-            {% endif %}
-          {% endfor %}
-        </ul>
-        <div class="alert alert-info text-center mt-3 total-box" id="totalOutput">
-          Total: ₹{{ total }}
-        </div>
-      {% endif %}
     </div>
   </div>
 
@@ -167,35 +215,11 @@
       document.body.classList.toggle('dark-mode');
     }
 
-    let gujaratiMode = false;
-
-    function convertToGujaratiDigits(num) {
-      return num.toString().replace(/\d/g, d => '૦૧૨૩૪૫૬૭૮૯'[d]);
-    }
-
-    function toggleGujarati() {
-      gujaratiMode = !gujaratiMode;
-
-      const map = {
-        title: gujaratiMode ? "ખોડિયાર પ્રોવિઝન સ્ટોર" : "Khodiyar Provision Store",
-        subtitle: gujaratiMode ? "દૈનિક વેચાણની ગણતરી કરો" : "Easily compute daily sales",
-        label_gold: gujaratiMode ? "અમુલ ગોલ્ડ (₹૩૪)" : "Amul Gold (₹34)",
-        label_taaza: gujaratiMode ? "અમુલ તાજા (₹૨૮)" : "Amul Taaza (₹28)",
-        label_tea: gujaratiMode ? "અમુલ ટી (₹૬૩)" : "Amul Tea (₹63)",
-        label_chai: gujaratiMode ? "ચા મજા (₹૫૫)" : "Chai Maza (₹55)",
-        label_other: gujaratiMode ? "અન્ય ₹" : "Other ₹",
-        breakdownTitle: gujaratiMode ? "વિગતવાર માહિતી" : "Breakdown"
-      };
-
-      for (const id in map) {
-        const el = document.getElementById(id);
-        if (el) el.innerText = map[id];
-      }
-
-      const totalBox = document.getElementById("totalOutput");
-      if (totalBox && gujaratiMode) {
-        totalBox.innerHTML = totalBox.innerHTML.replace(/\d/g, d => '૦૧૨૩૪૫૬૭૮૯'[d]);
-      }
+    function switchLanguage() {
+      const englishForm = document.getElementById('english-form');
+      const gujaratiForm = document.getElementById('gujarati-form');
+      englishForm.style.display = englishForm.style.display === 'none' ? 'block' : 'none';
+      gujaratiForm.style.display = gujaratiForm.style.display === 'none' ? 'block' : 'none';
     }
   </script>
 </body>
