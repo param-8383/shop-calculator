@@ -1,119 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Khodiyar Provision Store</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati&display=swap');
+<!-- Keep your head section unchanged -->
 
-    body, html {
-      height: 100%;
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      transition: background-color 0.3s, color 0.3s;
-    }
-
-    .dark-mode {
-      background-color: #121212;
-      color: white;
-    }
-
-    .dark-mode .card {
-      background-color: rgba(33, 33, 33, 0.95);
-      color: white;
-    }
-
-    .overlay {
-      min-height: 100vh;
-      padding: 2rem 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .card {
-      background-color: rgba(240, 248, 255, 0.9);
-      border-radius: 16px;
-      padding: 1.5rem;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-      backdrop-filter: blur(4px);
-    }
-
-    .form-section {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      justify-content: space-between;
-    }
-
-    .form-group {
-      flex: 1 1 calc(33.333% - 1rem);
-      min-width: 160px;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .form-label {
-      font-weight: 600;
-      font-size: 0.85rem;
-      margin-bottom: 0;
-    }
-
-    .form-control {
-      font-size: 0.95rem;
-      border-radius: 10px;
-      padding: 0.5rem;
-      max-width: 5rem;
-    }
-
-    .total-box {
-      font-size: 1.2rem;
-      font-weight: bold;
-    }
-
-    .toggle-switches {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 1rem;
-    }
-
-    @media (max-width: 768px) {
-      .form-group {
-        flex: 1 1 48%;
-      }
-    }
-
-    @media (max-width: 576px) {
-      .form-group {
-        flex: 1 1 100%;
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .form-label {
-        margin-bottom: 0.25rem;
-      }
-
-      .toggle-switches {
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-    }
-
-    .gujarati-font {
-      font-family: 'Noto Sans Gujarati', sans-serif;
-    }
-  </style>
-</head>
-<body class="" id="body">
+<body id="body">
   <div class="overlay">
     <div class="card w-100" style="max-width: 900px;">
       <div class="toggle-switches">
         <button class="btn btn-outline-primary" onclick="toggleTheme()">Toggle Theme</button>
-        <button class="btn btn-outline-success" onclick="translateToGujarati()">Gujarati</button>
+        <div>
+          <button class="btn btn-outline-success me-2" onclick="translateAllToGujarati()">Gujarati</button>
+          <button class="btn btn-outline-secondary" onclick="translateAllToEnglish()">English</button>
+        </div>
       </div>
 
       <div id="main-content">
@@ -160,11 +55,11 @@
               {% if data.total > 0 %}
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                   {% if data.qty is defined and data.price is defined %}
-                    <span>{{ item }} — {{ data.qty }} × ₹{{ data.price }}</span>
+                    <span class="item-line">{{ item }} — {{ data.qty }} × ₹{{ data.price }}</span>
                   {% else %}
-                    <span>{{ item }}</span>
+                    <span class="item-line">{{ item }}</span>
                   {% endif %}
-                  <strong>₹{{ data.total }}</strong>
+                  <strong class="item-total">₹{{ data.total }}</strong>
                 </li>
               {% endif %}
             {% endfor %}
@@ -174,7 +69,6 @@
           </div>
         {% endif %}
       </div>
-
     </div>
   </div>
 
@@ -183,32 +77,113 @@
       document.body.classList.toggle('dark-mode');
     }
 
-    function translateToGujarati() {
-      const labels = document.querySelectorAll('.form-label');
-      const gujaratiMap = {
-        'Amul Gold (₹34)': 'અમૂલ ગોલ્ડ (₹૩૪)',
-        'Amul Taaza (₹28)': 'અમૂલ તાઝા (₹૨૮)',
-        'Amul Tea (₹63)': 'અમૂલ ટી (₹૬૩)',
-        'Amul Chai Maza (₹55)': 'ચા મજા (₹૫૫)',
-        'Other (₹)': 'અન્ય (₹)',
-        'Qty': 'જથ્થો',
-        'Amount': 'રકમ',
-        'Calculate Total': 'કુલ ગણો',
-        'Breakdown': 'વિગતવાર',
-        'Total:': 'કુલ રકમ:'
-      };
-      labels.forEach(label => {
-        if (gujaratiMap[label.textContent]) {
-          label.textContent = gujaratiMap[label.textContent];
+    const translations = {
+      'Amul Gold': 'અમૂલ ગોલ્ડ',
+      'Amul Taaza': 'અમૂલ તાઝા',
+      'Amul Tea': 'અમૂલ ટી',
+      'Amul Chai Maza': 'ચા મજા',
+      'Other': 'અન્ય',
+      'Qty': 'જથ્થો',
+      'Amount': 'રકમ',
+      'Calculate Total': 'કુલ ગણો',
+      'Breakdown': 'વિગતવાર',
+      'Total:': 'કુલ રકમ:',
+    };
+
+    const gujDigits = ['૦', '૧', '૨', '૩', '૪', '૫', '૬', '૭', '૮', '૯'];
+    const engDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+    function toGujaratiDigit(str) {
+      return str.toString().split('').map(d => gujDigits[parseInt(d)] ?? d).join('');
+    }
+
+    function toEnglishDigit(str) {
+      return str.split('').map(d => {
+        const index = gujDigits.indexOf(d);
+        return index !== -1 ? index : d;
+      }).join('');
+    }
+
+    function translateAllToGujarati() {
+      document.getElementById('main-content').classList.add('gujarati-font');
+
+      document.querySelectorAll('.form-label').forEach(label => {
+        for (let en in translations) {
+          if (label.textContent.includes(en)) {
+            label.textContent = label.textContent
+              .replace(en, translations[en])
+              .replace(/\d+/g, m => toGujaratiDigit(m));
+          }
         }
       });
-      document.querySelector('.btn-success').textContent = 'કુલ ગણો';
-      const breakdownTitle = document.querySelector('h6');
-      if (breakdownTitle) breakdownTitle.textContent = 'વિગતવાર';
+
+      document.querySelectorAll('.form-control').forEach(input => {
+        if (input.placeholder === 'Qty') input.placeholder = translations['Qty'];
+        if (input.placeholder === 'Amount') input.placeholder = translations['Amount'];
+      });
+
+      const button = document.querySelector('.btn-success');
+      if (button) button.textContent = translations['Calculate Total'];
+
+      const breakdown = document.querySelector('h6');
+      if (breakdown) breakdown.textContent = translations['Breakdown'];
+
       const totalBox = document.getElementById('total-box');
-      if (totalBox) totalBox.innerHTML = totalBox.innerHTML.replace('Total:', 'કુલ રકમ:');
-      document.getElementById('main-content').classList.add('gujarati-font');
+      if (totalBox) {
+        totalBox.innerHTML = totalBox.innerHTML
+          .replace('Total:', translations['Total:'])
+          .replace(/\d+/g, m => toGujaratiDigit(m));
+      }
+
+      document.querySelectorAll('.item-line').forEach(el => {
+        el.innerHTML = el.innerHTML.replace(/\d+/g, m => toGujaratiDigit(m));
+      });
+
+      document.querySelectorAll('.item-total').forEach(el => {
+        el.textContent = el.textContent.replace(/\d+/g, m => toGujaratiDigit(m));
+      });
+    }
+
+    function translateAllToEnglish() {
+      document.getElementById('main-content').classList.remove('gujarati-font');
+
+      const reverseMap = Object.fromEntries(Object.entries(translations).map(([k, v]) => [v, k]));
+
+      document.querySelectorAll('.form-label').forEach(label => {
+        for (let guj in reverseMap) {
+          if (label.textContent.includes(guj)) {
+            label.textContent = label.textContent
+              .replace(guj, reverseMap[guj])
+              .replace(/[૦૧૨૩૪૫૬૭૮૯]+/g, m => toEnglishDigit(m));
+          }
+        }
+      });
+
+      document.querySelectorAll('.form-control').forEach(input => {
+        if (input.placeholder === translations['Qty']) input.placeholder = 'Qty';
+        if (input.placeholder === translations['Amount']) input.placeholder = 'Amount';
+      });
+
+      const button = document.querySelector('.btn-success');
+      if (button) button.textContent = 'Calculate Total';
+
+      const breakdown = document.querySelector('h6');
+      if (breakdown) breakdown.textContent = 'Breakdown';
+
+      const totalBox = document.getElementById('total-box');
+      if (totalBox) {
+        totalBox.innerHTML = totalBox.innerHTML
+          .replace(translations['Total:'], 'Total:')
+          .replace(/[૦૧૨૩૪૫૬૭૮૯]+/g, m => toEnglishDigit(m));
+      }
+
+      document.querySelectorAll('.item-line').forEach(el => {
+        el.innerHTML = el.innerHTML.replace(/[૦૧૨૩૪૫૬૭૮૯]+/g, m => toEnglishDigit(m));
+      });
+
+      document.querySelectorAll('.item-total').forEach(el => {
+        el.textContent = el.textContent.replace(/[૦૧૨૩૪૫૬૭૮૯]+/g, m => toEnglishDigit(m));
+      });
     }
   </script>
 </body>
-</html>
