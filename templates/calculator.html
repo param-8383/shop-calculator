@@ -6,54 +6,50 @@
   <title>Shop Calculator</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body, html {
-      height: 100%;
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: url('https://cdn.pixabay.com/photo/2018/01/11/07/54/yogurt-3078195_1280.jpg') no-repeat center center fixed;
-      background-size: cover;
-    }
+  body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: url('https://cdn.pixabay.com/photo/2018/01/11/07/54/yogurt-3078195_1280.jpg') no-repeat center center fixed;
+    background-size: cover;
+  }
 
-    .overlay {
-      background-color: rgba(255, 255, 255, 0.85);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-    }
+  .card {
+    background: rgba(255, 255, 255, 0.88);
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+  }
 
-    .card {
-      width: 100%;
-      max-width: 500px;
-      padding: 2rem;
-      border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    }
+  .form-label {
+    font-weight: 600;
+  }
 
-    .form-label {
-      font-weight: 600;
-    }
+  .form-control {
+    font-size: 1rem;
+    padding: 0.6rem;
+    border-radius: 8px;
+  }
 
-    .form-control {
-      border-radius: 8px;
-      padding: 0.6rem;
-    }
+  .total-box {
+    font-size: 1.3rem;
+    font-weight: bold;
+  }
 
-    .total-box {
-      font-size: 1.3rem;
-      font-weight: bold;
-    }
+  .container {
+    padding: 1rem;
+  }
 
-    button.btn {
-      font-size: 1rem;
-      padding: 0.7rem;
-    }
+  h4, p {
+    margin-bottom: 0.5rem;
+  }
 
-    .text-muted {
-      font-size: 0.9rem;
-    }
-  </style>
+  button.btn {
+    font-size: 1rem;
+    padding: 0.7rem;
+  }
+</style>
+
 </head>
 <body>
   <div class="overlay">
