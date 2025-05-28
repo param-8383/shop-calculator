@@ -6,28 +6,32 @@ app = Flask(__name__)
 
 DATA_FILE = 'products.json'
 
+DEFAULT_PRODUCTS = {
+    "amul_gold": {"name_en": "Amul Gold", "name_gu": "અમુલ ગોલ્ડ", "price": 34},
+    "amul_taaza": {"name_en": "Amul Taaza", "name_gu": "અમુલ તાઝા", "price": 28},
+    "amul_tea": {"name_en": "Amul Tea", "name_gu": "અમુલ ટી", "price": 63},
+    "amul_chai_maza": {"name_en": "Amul Chai Maza", "name_gu": "અમુલ ચાઇ મઝા", "price": 55},
+    "other": {"name_en": "Other", "name_gu": "અન્ય", "price": 1}
+}
+
+if not os.path.exists(DATA_FILE):
+    with open(DATA_FILE, 'w') as f:
+        json.dump(DEFAULT_PRODUCTS, f)
+
 def load_products():
-    if not os.path.exists(DATA_FILE):
-        return {}
-    with open(DATA_FILE, 'r', encoding='utf-8') as f:
+    with open(DATA_FILE, 'r') as f:
         return json.load(f)
 
 def save_products(products):
-    with open(DATA_FILE, 'w', encoding='utf-8') as f:
-        json.dump(products, f, ensure_ascii=False, indent=2)
+    with open(DATA_FILE, 'w') as f:
+        json.dump(products, f, indent=4, ensure_ascii=False)
 
-def to_gujarati_digits(number):
-    gujarati_numerals = '૦૧૨૩૪૫૬૭૮૯'
-    return ''.join(gujarati_numerals[int(d)] if d.isdigit() else d for d in str(number))
-
-TRANSLATIONS = {
-    'Amul Gold': 'અમુલ ગોલ્ડ',
-    'Amul Taaza': 'અમુલ તાજા',
-    'Amul Tea': 'અમુલ ટી',
-    'Amul Chai Maza': 'અમુલ ચા મઝા',
-    'Other': 'અન્ય',
-    'Total': 'કુલ',
-}
+def to_gujarati_number(n):
+    gujarati_digits = {
+        '0': '૦', '1': '૧', '2': '૨', '3': '૩', '4': '૪',
+        '5': '૫', '6': '૬', '7': '૭', '8': '૮', '9': '૯'
+    }
+    return ''.join(gujarati_digits.get(ch, ch) for ch in str(n))
 
 @app.route('/', methods=['GET', 'POST'])
 def calculator():
@@ -35,66 +39,73 @@ def calculator():
     total = 0
     details = {}
     error = None
-    lang = request.args.get('lang', 'en')
+    is_gujarati = request.args.get('lang') == 'gu'
 
     if request.method == 'POST':
         try:
-            for key, info in products.items():
-                qty = int(request.form.get(key, 0) or 0)
-                item_total = qty * info['price']
-                details[key] = {
-                    'qty': qty,
-                    'price': info['price'],
-                    'total': item_total
-                }
-                total += item_total
-            other_amt = int(request.form.get('other', 0) or 0)
-            details['Other'] = other_amt
-            total += other_amt
-
-            if lang == 'gu':
-                gujarati_details = {}
-                for key, value in details.items():
-                    guj_key = TRANSLATIONS.get(key, key)
-                    if isinstance(value, dict):
-                        gujarati_details[guj_key] = {
-                            'qty': to_gujarati_digits(value['qty']),
-                            'price': to_gujarati_digits(value['price']),
-                            'total': to_gujarati_digits(value['total'])
-                        }
-                    else:
-                        gujarati_details[guj_key] = to_gujarati_digits(value)
-                details = gujarati_details
-                total = to_gujarati_digits(total)
+            for key in products.keys():
+                if key == 'other':
+                    qty = int(request.form.get(key, 0) or 0)
+                    details[products[key]['name_gu'] if is_gujarati else products[key]['name_en']] = {
+                        'qty': None,
+                        'price': None,
+                        'total': qty
+                    }
+                    total += qty
+                else:
+                    qty = int(request.form.get(key, 0) or 0)
+                    item_total = qty * products[key]['price']
+                    details[products[key]['name_gu'] if is_gujarati else products[key]['name_en']] = {
+                        'qty': qty,
+                        'price': products[key]['price'],
+                        'total': item_total
+                    }
+                    total += item_total
         except ValueError:
             error = "Please enter valid numbers only."
 
-    return render_template('calculator.html', products=products, total=total, details=details, error=error, lang=lang)
+    return render_template(
+        'calculator.html',
+        products=products,
+        details=details,
+        total=total,
+        error=error,
+        is_gujarati=is_gujarati,
+        to_gujarati_number=to_gujarati_number
+    )
 
 @app.route('/manage')
 def manage():
     products = load_products()
     return render_template('manage.html', products=products)
 
-@app.route('/add', methods=['POST'])
+@app.route('/add', methods=['GET', 'POST'])
 def add():
     products = load_products()
-    name = request.form['name']
-    price = int(request.form['price'])
-    key = name.lower().replace(' ', '_')
-    products[key] = {'name': name, 'price': price}
-    save_products(products)
-    return redirect(url_for('manage'))
+    if request.method == 'POST':
+        key = request.form['key']
+        name_en = request.form['name_en']
+        name_gu = request.form['name_gu']
+        price = int(request.form['price'])
+        if key not in products:
+            products[key] = {"name_en": name_en, "name_gu": name_gu, "price": price}
+            save_products(products)
+        return redirect(url_for('manage'))
+    return render_template('add.html')
 
 @app.route('/edit/<key>', methods=['GET', 'POST'])
 def edit(key):
     products = load_products()
+    if key not in products:
+        return redirect(url_for('manage'))
+
     if request.method == 'POST':
-        name = request.form['name']
-        price = int(request.form['price'])
-        products[key] = {'name': name, 'price': price}
+        products[key]['name_en'] = request.form['name_en']
+        products[key]['name_gu'] = request.form['name_gu']
+        products[key]['price'] = int(request.form['price'])
         save_products(products)
         return redirect(url_for('manage'))
+
     return render_template('edit.html', key=key, product=products[key])
 
 @app.route('/delete/<key>')
@@ -106,5 +117,5 @@ def delete(key):
     return redirect(url_for('manage'))
 
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 10000))
+    port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port, debug=True)
