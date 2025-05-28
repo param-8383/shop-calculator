@@ -45,12 +45,13 @@
     }
 
     .container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      padding: 1rem;
-    }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1rem;
+}
+
 
     h4, p {
       margin-bottom: 0.5rem;
@@ -83,29 +84,32 @@
           <div class="alert alert-danger">{{ error }}</div>
         {% endif %}
 
-        <form method="POST" autocomplete="off">
-          <div class="mb-3">
-            <label class="form-label">Amul Gold (₹34)</label>
-            <input type="number" min="0" name="amul_gold" class="form-control" placeholder="Enter quantity">
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Amul Taaza (₹28)</label>
-            <input type="number" min="0" name="amul_taaza" class="form-control" placeholder="Enter quantity">
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Amul Tea (₹63)</label>
-            <input type="number" min="0" name="amul_tea" class="form-control" placeholder="Enter quantity">
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Amul Chai Maza (₹55)</label>
-            <input type="number" min="0" name="amul_chai_maza" class="form-control" placeholder="Enter quantity">
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Other (₹)</label>
-            <input type="number" min="0" name="other" class="form-control" placeholder="Enter fixed amount">
-          </div>
-          <button type="submit" class="btn btn-success w-100 mt-2">Calculate Total</button>
-        </form>
+       <form method="POST" autocomplete="off">
+  <div class="row">
+    <div class="col-12 col-md-6 mb-3">
+      <label class="form-label">Amul Gold (₹34)</label>
+      <input type="number" min="0" name="amul_gold" class="form-control" placeholder="Enter quantity">
+    </div>
+    <div class="col-12 col-md-6 mb-3">
+      <label class="form-label">Amul Taaza (₹28)</label>
+      <input type="number" min="0" name="amul_taaza" class="form-control" placeholder="Enter quantity">
+    </div>
+    <div class="col-12 col-md-6 mb-3">
+      <label class="form-label">Amul Tea (₹63)</label>
+      <input type="number" min="0" name="amul_tea" class="form-control" placeholder="Enter quantity">
+    </div>
+    <div class="col-12 col-md-6 mb-3">
+      <label class="form-label">Amul Chai Maza (₹55)</label>
+      <input type="number" min="0" name="amul_chai_maza" class="form-control" placeholder="Enter quantity">
+    </div>
+    <div class="col-12 mb-3">
+      <label class="form-label">Other (₹)</label>
+      <input type="number" min="0" name="other" class="form-control" placeholder="Enter fixed amount">
+    </div>
+  </div>
+  <button type="submit" class="btn btn-success w-100 mt-2">Calculate Total</button>
+</form>
+
 
         {% if details %}
           <hr>
