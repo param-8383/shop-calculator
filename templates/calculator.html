@@ -180,31 +180,53 @@
           <h3 class="text-success">🛒 ખોદિયાર પ્રોવિઝન સ્ટોર</h3>
           <p class="text-muted">દૈનિક વેચાણ માટે કુલ રકમ ગણતરી કરો</p>
         </div>
-        <form>
+        <form method="POST" autocomplete="off">
           <div class="form-section">
             <div class="form-group">
               <label class="form-label">અમૂલ ગોલ્ડ (₹૩૪)</label>
-              <input type="number" class="form-control" placeholder="જથ્થો" />
+              <input type="number" name="amul_gold" class="form-control" placeholder="જથ્થો" />
             </div>
             <div class="form-group">
               <label class="form-label">અમૂલ તાઝા (₹૨૮)</label>
-              <input type="number" class="form-control" placeholder="જથ્થો" />
+              <input type="number" name="amul_taaza" class="form-control" placeholder="જથ્થો" />
             </div>
             <div class="form-group">
               <label class="form-label">અમૂલ ટી (₹૬૩)</label>
-              <input type="number" class="form-control" placeholder="જથ્થો" />
+              <input type="number" name="amul_tea" class="form-control" placeholder="જથ્થો" />
             </div>
             <div class="form-group">
               <label class="form-label">ચા મજા (₹૫૫)</label>
-              <input type="number" class="form-control" placeholder="જથ્થો" />
+              <input type="number" name="amul_chai_maza" class="form-control" placeholder="જથ્થો" />
             </div>
             <div class="form-group">
               <label class="form-label">અન્ય (₹)</label>
-              <input type="number" class="form-control" placeholder="રકમ" />
+              <input type="number" name="other" class="form-control" placeholder="રકમ" />
             </div>
           </div>
           <button type="submit" class="btn btn-success w-100 mt-3">કુલ ગણો</button>
         </form>
+
+        {% if details %}
+          <hr />
+          <h6 class="text-center mt-3">વિગતવાર</h6>
+          <ul class="list-group">
+            {% for item, data in details.items() %}
+              {% if data.total > 0 %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  {% if data.qty is defined and data.price is defined %}
+                    <span>{{ item }} — {{ data.qty }} × ₹{{ data.price }}</span>
+                  {% else %}
+                    <span>{{ item }}</span>
+                  {% endif %}
+                  <strong>₹{{ data.total }}</strong>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+          <div class="alert alert-info text-center mt-3 total-box">
+            કુલ: ₹{{ total }}
+          </div>
+        {% endif %}
       </div>
 
     </div>
