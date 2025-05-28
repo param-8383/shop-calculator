@@ -6,14 +6,14 @@
   <title>Khodiyar Provision Store</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(-45deg, #f0f4ff, #e0f7fa, #fff3e0, #f8bbd0);
-      background-size: 400% 400%;
-      animation: gradientFlow 15s ease infinite;
-    }
+   body, html {
+  height: 100%;
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: url('https://images.pexels.com/photos/10919579/pexels-photo-10919579.jpeg') no-repeat center center fixed;
+  background-size: cover;
+}
+
 
     @keyframes gradientFlow {
       0% { background-position: 0% 50%; }
@@ -22,13 +22,14 @@
     }
 
     .overlay {
-      background-color: rgba(255, 255, 255, 0.9);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
+  background-color: rgba(255, 255, 255, 0.85); /* light semi-transparent */
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
     }
+
 
     .card {
       width: 100%;
