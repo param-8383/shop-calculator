@@ -116,44 +116,13 @@
         <button class="btn btn-outline-success" onclick="switchLanguage()">ગુજરાતી મોડ</button>
       </div>
 
-      {% if message %}
-        <div class="alert alert-info text-center">{{ message }}</div>
-      {% endif %}
-
-      {% if items %}
-        <div class="mb-4">
-          <h5>🛍️ Product Management</h5>
-          <table class="table table-bordered table-sm">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for item in items %}
-                <tr>
-                  <td>{{ item.name }}</td>
-                  <td>₹{{ item.price }}</td>
-                  <td>
-                    <a href="/edit/{{ item.id }}" class="btn btn-sm btn-warning">Edit</a>
-                    <a href="/delete/{{ item.id }}" class="btn btn-sm btn-danger">Delete</a>
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      {% endif %}
-
       <div id="english-form">
         <div class="text-center mb-4">
           <h3 class="text-primary">🛒 Shop - Khodiyar Provision Store</h3>
           <p class="text-muted">Easily compute totals for your daily sales</p>
         </div>
 
-        {% if error %}
+        {% if error and lang != 'gu' %}
           <div class="alert alert-danger">{{ error }}</div>
         {% endif %}
 
@@ -183,7 +152,7 @@
           <button type="submit" class="btn btn-success w-100 mt-3">Calculate Total</button>
         </form>
 
-        {% if lang == 'en' and details %}
+        {% if details and lang != 'gu' %}
           <hr />
           <h6 class="text-center mt-3">Breakdown</h6>
           <ul class="list-group">
@@ -211,7 +180,7 @@
           <h3 class="text-success">🛒 ખોદિયાર પ્રોવિઝન સ્ટોર</h3>
           <p class="text-muted">દૈનિક વેચાણ માટે કુલ રકમ ગણતરી કરો</p>
         </div>
-        <form method="POST" autocomplete="off" action="/?lang=gu">
+        <form method="POST" action="/?lang=gu">
           <div class="form-section">
             <div class="form-group">
               <label class="form-label">અમૂલ ગોલ્ડ (₹૩૪)</label>
@@ -237,21 +206,25 @@
           <button type="submit" class="btn btn-success w-100 mt-3">કુલ ગણો</button>
         </form>
 
-        {% if lang == 'gu' and details %}
+        {% if details and lang == 'gu' %}
           <hr />
-          <h6 class="text-center mt-3">વિગતવાર માહિતી</h6>
+          <h6 class="text-center mt-3">વિગતવાર</h6>
           <ul class="list-group">
             {% for item, data in details.items() %}
-              {% if data.total %}
+              {% if data.total > 0 %}
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                  <span>{{ item }} {% if data.qty is defined and data.price is defined %} — {{ data.qty }} × ₹{{ data.price }}{% endif %}</span>
+                  {% if data.qty is defined and data.price is defined %}
+                    <span>{{ item }} — {{ data.qty }} × ₹{{ data.price }}</span>
+                  {% else %}
+                    <span>{{ item }}</span>
+                  {% endif %}
                   <strong>₹{{ data.total }}</strong>
                 </li>
               {% endif %}
             {% endfor %}
           </ul>
-          <div class="alert alert-success text-center mt-3 total-box gujarati-font">
-            કુલ: ₹{{ total }}
+          <div class="alert alert-info text-center mt-3 total-box">
+            કુલ રકમ: ₹{{ total }}
           </div>
         {% endif %}
       </div>
