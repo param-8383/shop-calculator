@@ -1,141 +1,181 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Khodiyar Provision Store - Product Management</title>
+  <title>Shop Calculator</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --card-bg-light: rgba(240, 248, 255, 0.9);
-      --card-bg-dark: rgba(30, 30, 30, 0.9);
-      --text-color-light: #000;
-      --text-color-dark: #fff;
-      --form-bg-light: #fff;
-      --form-bg-dark: #333;
-      --border-color-dark: #555;
-    }
-
-    [data-theme="dark"] {
-      background-color: #121212;
-      color: var(--text-color-dark);
-    }
-
-    body, html {
-      height: 100%;
+    body {
       margin: 0;
-      font-family: 'Roboto', sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       background: url('https://images.pexels.com/photos/10919579/pexels-photo-10919579.jpeg') no-repeat center center fixed;
       background-size: cover;
     }
 
     .overlay {
       min-height: 100vh;
-      padding: 2rem 1rem;
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       justify-content: center;
-      flex-direction: column;
+      padding: 2rem;
     }
 
     .card {
-      width: 100%;
-      max-width: 850px;
-      background-color: var(--card-bg-light);
+      background-color: rgba(255, 255, 255, 0.95);
       border-radius: 16px;
-      padding: 1.5rem;
-      margin-bottom: 2rem;
+      padding: 2rem;
+      max-width: 800px;
+      width: 100%;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     }
 
-    [data-theme="dark"] .card {
-      background-color: var(--card-bg-dark);
+    .form-label {
+      font-weight: 600;
+      font-size: 0.85rem;
     }
 
     .form-control {
-      border-radius: 8px;
+      font-size: 1rem;
+      border-radius: 10px;
+      padding: 0.5rem;
+      max-width: 100px;
     }
 
-    .product-table th, .product-table td {
-      vertical-align: middle;
+    .form-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .form-group {
+      flex: 1 1 45%;
+      min-width: 140px;
+    }
+
+    .gujarati-mode {
+      font-family: 'Noto Sans Gujarati', sans-serif;
+    }
+
+    #langToggle {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      z-index: 10;
+    }
+
+    @media (max-width: 576px) {
+      .form-group {
+        flex: 1 1 100%;
+      }
+
+      #langToggle {
+        position: static;
+        margin-bottom: 1rem;
+        display: block;
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="overlay container">
-    <div class="card">
-      <h4 class="mb-3">Product Management</h4>
-      <form id="productForm">
-        <div class="row g-2">
-          <div class="col-md-5">
-            <input type="text" id="productName" class="form-control" placeholder="Product Name" required>
+  <div class="overlay">
+    <div class="card" id="calculatorCard">
+      <button class="btn btn-outline-secondary mb-3" id="langToggle">Switch to Gujarati</button>
+
+      <div class="text-center mb-4">
+        <h4 id="heading">Shop Calculator</h4>
+        <p id="subheading">Quickly calculate your daily totals</p>
+      </div>
+
+      <form method="POST">
+        <div class="form-section">
+          <div class="form-group">
+            <label class="form-label" id="label1">Amul Gold (₹34)</label>
+            <input type="number" min="0" name="amul_gold" class="form-control qty-field" />
           </div>
-          <div class="col-md-3">
-            <input type="number" id="productPrice" class="form-control" placeholder="Price" required>
+          <div class="form-group">
+            <label class="form-label" id="label2">Amul Taaza (₹28)</label>
+            <input type="number" min="0" name="amul_taaza" class="form-control qty-field" />
           </div>
-          <div class="col-md-4 d-grid">
-            <button type="submit" class="btn btn-primary">Add Product</button>
+          <div class="form-group">
+            <label class="form-label" id="label3">Amul Tea (₹63)</label>
+            <input type="number" min="0" name="amul_tea" class="form-control qty-field" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" id="label4">Amul Chai Maza (₹55)</label>
+            <input type="number" min="0" name="amul_chai_maza" class="form-control qty-field" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" id="label5">Other (₹)</label>
+            <input type="number" min="0" name="other" class="form-control qty-field" />
           </div>
         </div>
+        <button type="submit" class="btn btn-success w-100 mt-3" id="calcBtn">Calculate Total</button>
       </form>
-    </div>
-
-    <div class="card">
-      <h5>Product List</h5>
-      <table class="table table-striped product-table">
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Price (₹)</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="productList">
-        </tbody>
-      </table>
     </div>
   </div>
 
   <script>
-    const form = document.getElementById('productForm');
-    const productList = document.getElementById('productList');
-    let products = [];
+    const toGujaratiDigits = (input) => input.toString().replace(/\d/g, (d) => "૦૧૨૩૪૫૬૭૮૯"[d]);
 
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const name = document.getElementById('productName').value;
-      const price = parseFloat(document.getElementById('productPrice').value);
-      products.push({ name, price });
-      renderProducts();
-      form.reset();
-    });
+    const gujaratiLabels = {
+      heading: "દુકાન કેલ્ક્યુલેટર",
+      subheading: "દૈનિક વેચાણના કુલની ઝડપથી ગણતરી કરો",
+      label1: "અમુલ ગોલ્ડ (₹૩૪)",
+      label2: "અમુલ તાજા (₹૨૮)",
+      label3: "અમુલ ટી (₹૬૩)",
+      label4: "અમુલ ચા મઝા (₹૫૫)",
+      label5: "અન્ય (₹)",
+      calcBtn: "કુલ ગણો",
+      toggleText: "Switch to English"
+    };
 
-    function renderProducts() {
-      productList.innerHTML = '';
-      products.forEach((product, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td><input type="text" class="form-control" value="${product.name}" onchange="editProduct(${index}, 'name', this.value)"></td>
-          <td><input type="number" class="form-control" value="${product.price}" onchange="editProduct(${index}, 'price', this.value)"></td>
-          <td><button class="btn btn-danger btn-sm" onclick="removeProduct(${index})">Remove</button></td>
-        `;
-        productList.appendChild(row);
-      });
-    }
+    const englishLabels = {
+      heading: "Shop Calculator",
+      subheading: "Quickly calculate your daily totals",
+      label1: "Amul Gold (₹34)",
+      label2: "Amul Taaza (₹28)",
+      label3: "Amul Tea (₹63)",
+      label4: "Amul Chai Maza (₹55)",
+      label5: "Other (₹)",
+      calcBtn: "Calculate Total",
+      toggleText: "Switch to Gujarati"
+    };
 
-    function editProduct(index, field, value) {
-      if (field === 'price') {
-        products[index][field] = parseFloat(value);
+    let isGujarati = false;
+
+    document.getElementById('langToggle').addEventListener('click', function () {
+      isGujarati = !isGujarati;
+      const labels = isGujarati ? gujaratiLabels : englishLabels;
+      const card = document.getElementById('calculatorCard');
+
+      document.getElementById('heading').textContent = labels.heading;
+      document.getElementById('subheading').textContent = labels.subheading;
+      document.getElementById('label1').textContent = labels.label1;
+      document.getElementById('label2').textContent = labels.label2;
+      document.getElementById('label3').textContent = labels.label3;
+      document.getElementById('label4').textContent = labels.label4;
+      document.getElementById('label5').textContent = labels.label5;
+      document.getElementById('calcBtn').textContent = labels.calcBtn;
+      this.textContent = labels.toggleText;
+
+      if (isGujarati) {
+        card.classList.add('gujarati-mode');
+        document.querySelectorAll('.qty-field').forEach(input => {
+          input.addEventListener('input', () => {
+            const gujNum = toGujaratiDigits(input.value);
+            input.setAttribute('data-value', gujNum);
+          });
+        });
       } else {
-        products[index][field] = value;
+        card.classList.remove('gujarati-mode');
+        document.querySelectorAll('.qty-field').forEach(input => {
+          input.removeAttribute('data-value');
+        });
       }
-    }
-
-    function removeProduct(index) {
-      products.splice(index, 1);
-      renderProducts();
-    }
+    });
   </script>
 </body>
 </html>
